@@ -1,0 +1,1043 @@
+﻿/* ========================================
+   RESET
+======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+    background: #030303;
+    color: #ffffff;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    overflow-x: hidden;
+
+    transition:
+        background-color 1s ease;
+}
+
+
+/* ========================================
+   INTRO
+======================================== */
+
+.intro {
+    height: 100vh;
+
+    min-height: 700px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    position: relative;
+
+    background:
+        radial-gradient(circle at center,
+            #1b1b1b 0%,
+            #080808 45%,
+            #000000 100%);
+}
+
+
+.intro-content {
+    position: relative;
+
+    z-index: 2;
+}
+
+
+.eyebrow {
+    display: block;
+
+    margin-bottom: 30px;
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+
+    color: #777;
+}
+
+
+.intro h1 {
+    font-size: clamp(90px,
+            15vw,
+            220px);
+
+    line-height: 0.78;
+
+    letter-spacing: -12px;
+
+    font-weight: 700;
+}
+
+
+.intro p {
+    margin-top: 40px;
+
+    color: #999;
+
+    font-size: 18px;
+}
+
+
+.scroll-hint {
+    margin-top: 100px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 15px;
+
+    color: #666;
+
+    font-size: 11px;
+
+    text-transform: uppercase;
+
+    letter-spacing: 3px;
+}
+
+
+.scroll-line {
+    width: 1px;
+
+    height: 60px;
+
+    background:
+        linear-gradient(to bottom,
+            #ffffff,
+            transparent);
+
+    animation:
+        scrollIndicator 2s infinite;
+}
+
+
+@keyframes scrollIndicator {
+
+    0% {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    50% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+}
+
+
+/* ========================================
+   STORY
+======================================== */
+
+.story {
+    position: relative;
+}
+
+
+.story-section {
+
+    /*
+        700vh significa que o usuÃ¡rio
+        terÃ¡ bastante espaÃ§o para rolar.
+
+        A cena sticky continuarÃ¡ presa
+        enquanto essa Ã¡rea passa.
+    */
+
+    height: 700vh;
+
+    position: relative;
+}
+
+
+.sticky-scene {
+
+    position: sticky;
+
+    top: 0;
+
+    width: 100%;
+
+    height: 100vh;
+
+    overflow: hidden;
+
+    background: #030303;
+}
+
+
+/* ========================================
+   BACKGROUND
+======================================== */
+
+.background {
+
+    position: absolute;
+
+    inset: 0;
+
+    background:
+        radial-gradient(circle at 70% 50%,
+            rgba(255, 255, 255, 0.08),
+            transparent 35%);
+
+    transition:
+        background 1.5s ease;
+}
+
+
+/* ========================================
+   VISUAL
+======================================== */
+
+.visual {
+
+    position: absolute;
+
+    inset: 0;
+
+    pointer-events: none;
+}
+
+
+/* ========================================
+   UNIVERSO
+======================================== */
+
+.universe {
+
+    position: absolute;
+
+    width: 30px;
+
+    height: 30px;
+
+    border-radius: 50%;
+
+    left: 70%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    background: #ffffff;
+
+    box-shadow:
+        0 0 30px #ffffff,
+        0 0 80px #ffffff,
+        0 0 180px rgba(255, 255, 255, 0.7);
+
+    transition:
+        transform 1.5s cubic-bezier(0.22,
+            1,
+            0.36,
+            1);
+}
+
+
+/* ========================================
+   EARTH
+======================================== */
+
+.earth {
+
+    position: absolute;
+
+    width: 360px;
+
+    height: 360px;
+
+    border-radius: 50%;
+
+    right: 10%;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%) scale(0);
+
+    opacity: 0;
+
+    background:
+        radial-gradient(circle at 35% 35%,
+            #78bfff,
+            #246ca7 45%,
+            #061626 75%);
+
+    box-shadow:
+        0 0 70px rgba(60, 150, 255, 0.4),
+
+        inset -50px -30px 70px rgba(0, 0, 0, 0.8);
+
+    transition:
+        transform 1.2s ease,
+        opacity 1.2s ease;
+}
+
+
+/* ========================================
+   LIFE
+======================================== */
+
+.life {
+
+    position: absolute;
+
+    width: 100px;
+
+    height: 100px;
+
+    border-radius: 50%;
+
+    right: 25%;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%) scale(0);
+
+    opacity: 0;
+
+    border: 2px solid #73d8a0;
+
+    box-shadow:
+        0 0 40px rgba(100, 255, 180, 0.4);
+
+    transition:
+        transform 1.2s ease,
+        opacity 1.2s ease;
+}
+
+
+/* ========================================
+   HUMAN
+======================================== */
+
+.human {
+
+    position: absolute;
+
+    width: 100px;
+
+    height: 300px;
+
+    right: 20%;
+
+    bottom: 0;
+
+    background: #111;
+
+    border-radius:
+        60px 60px 20px 20px;
+
+    transform:
+        translateY(100%) scale(0.7);
+
+    opacity: 0;
+
+    transition:
+        transform 1.2s ease,
+        opacity 1.2s ease;
+}
+
+
+.human::before {
+
+    content: "";
+
+    position: absolute;
+
+    width: 80px;
+
+    height: 80px;
+
+    border-radius: 50%;
+
+    background: #111;
+
+    top: -65px;
+
+    left: 10px;
+}
+
+
+/* ========================================
+   TEXTO
+======================================== */
+
+.story-text {
+
+    position: absolute;
+
+    left: 10vw;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    width: min(500px,
+            80%);
+
+    z-index: 10;
+}
+
+
+.chapter {
+
+    position: absolute;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%) translateY(30px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.8s ease,
+        transform 0.8s ease;
+}
+
+
+.chapter.active {
+
+    opacity: 1;
+
+    transform:
+        translateY(-50%) translateY(0);
+
+    pointer-events: auto;
+}
+
+
+.chapter-number {
+
+    display: block;
+
+    font-size: 13px;
+
+    color: #666;
+
+    margin-bottom: 20px;
+}
+
+
+.chapter-date {
+
+    display: block;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color: #777;
+
+    margin-bottom: 15px;
+}
+
+
+.chapter h2 {
+
+    font-size:
+        clamp(55px,
+            7vw,
+            100px);
+
+    line-height: 0.9;
+
+    letter-spacing: -5px;
+}
+
+
+.chapter p {
+
+    margin-top: 30px;
+
+    max-width: 400px;
+
+    color: #888;
+
+    line-height: 1.7;
+
+    font-size: 15px;
+}
+
+
+/* ========================================
+   TIMELINE
+======================================== */
+
+.timeline {
+
+    position: absolute;
+
+    right: 6vw;
+
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    height: 55vh;
+
+    width: 80px;
+
+    z-index: 20;
+}
+
+
+.timeline-track {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 0;
+
+    width: 1px;
+
+    height: 100%;
+
+    background: #333;
+
+    transform:
+        translateX(-50%);
+}
+
+
+.timeline-progress {
+
+    position: absolute;
+
+    left: 50%;
+
+    top: 0;
+
+    width: 2px;
+
+    height: 0%;
+
+    background: #ffffff;
+
+    transform:
+        translateX(-50%);
+
+    transition:
+        height 0.15s linear;
+}
+
+
+/* ========================================
+   TIMELINE POINTS
+======================================== */
+
+.timeline-point {
+
+    position: absolute;
+
+    left: 50%;
+
+    transform:
+        translateX(-50%);
+
+    width: 40px;
+
+    height: 40px;
+
+    border: none;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+
+.timeline-point:nth-of-type(3) {
+    top: 0%;
+}
+
+
+.timeline-point:nth-of-type(4) {
+    top: 16.6%;
+}
+
+
+.timeline-point:nth-of-type(5) {
+    top: 33.3%;
+}
+
+
+.timeline-point:nth-of-type(6) {
+    top: 50%;
+}
+
+
+.timeline-point:nth-of-type(7) {
+    top: 66.6%;
+}
+
+
+.timeline-point:nth-of-type(8) {
+    top: 83.3%;
+}
+
+
+.timeline-point:nth-of-type(9) {
+    top: 100%;
+}
+
+
+.timeline-point span {
+
+    width: 7px;
+
+    height: 7px;
+
+    border-radius: 50%;
+
+    background: #444;
+
+    transition:
+        transform 0.3s ease,
+        background 0.3s ease;
+}
+
+
+.timeline-point.active span {
+
+    background: #ffffff;
+
+    transform:
+        scale(1.7);
+
+    box-shadow:
+        0 0 15px rgba(255, 255, 255, 0.7);
+}
+
+
+.timeline-point small {
+
+    position: absolute;
+
+    right: 25px;
+
+    white-space: nowrap;
+
+    color: #555;
+
+    font-size: 9px;
+
+    letter-spacing: 1px;
+
+    opacity: 0;
+
+    transition:
+        opacity 0.3s ease;
+}
+
+
+.timeline-point.active small {
+
+    opacity: 1;
+
+    color: #aaa;
+}
+
+
+/* ========================================
+   PROGRESSO
+======================================== */
+
+.progress-info {
+
+    position: absolute;
+
+    right: 6vw;
+
+    bottom: 7vh;
+
+    z-index: 20;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 5px;
+}
+
+
+.progress-info span {
+
+    color: #555;
+
+    font-size: 9px;
+
+    letter-spacing: 2px;
+}
+
+
+.progress-info strong {
+
+    font-size: 18px;
+
+    font-weight: 400;
+}
+
+
+/* ========================================
+   FINAL
+======================================== */
+
+.ending {
+
+    height: 100vh;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+
+    text-align: center;
+
+    background: #030303;
+}
+
+
+.ending span {
+
+    color: #666;
+
+    font-size: 11px;
+
+    letter-spacing: 5px;
+}
+
+
+.ending h2 {
+
+    margin-top: 25px;
+
+    font-size:
+        clamp(50px,
+            8vw,
+            110px);
+
+    letter-spacing: -5px;
+}
+
+
+#restart {
+
+    margin-top: 50px;
+
+    padding: 14px 25px;
+
+    border: 1px solid #444;
+
+    background: transparent;
+
+    color: white;
+
+    cursor: pointer;
+
+    transition:
+        background 0.3s ease,
+        color 0.3s ease;
+}
+
+
+#restart:hover {
+
+    background: white;
+
+    color: black;
+}
+
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+
+    .intro h1 {
+
+        letter-spacing: -7px;
+    }
+
+
+    .story-text {
+
+        left: 7vw;
+
+        width: 70%;
+    }
+
+
+    .chapter h2 {
+
+        font-size: 55px;
+
+        letter-spacing: -3px;
+    }
+
+
+    .chapter p {
+
+        font-size: 13px;
+    }
+
+
+    .timeline {
+
+        right: 3vw;
+
+        width: 45px;
+
+        height: 45vh;
+    }
+
+
+    .timeline-point small {
+
+        display: none;
+    }
+
+
+    .earth {
+
+        width: 220px;
+
+        height: 220px;
+
+        right: -50px;
+    }
+
+
+    .human {
+
+        right: 5%;
+    }
+
+}
+
+
+/* ========================================
+   BIG BANG
+======================================== */
+
+.big-bang {
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 1px;
+
+    left: 70%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%);
+
+    pointer-events: none;
+
+}
+
+
+/* ========================================
+   NÃšCLEO
+======================================== */
+
+.big-bang-core {
+
+    position: absolute;
+
+    width: 12px;
+
+    height: 12px;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%) scale(0);
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 20px white,
+        0 0 60px white,
+        0 0 120px rgba(255, 255, 255, 0.9);
+
+    opacity: 0;
+
+    transition:
+        opacity 0.1s linear;
+}
+
+
+/* ========================================
+   ONDAS DE EXPANSÃƒO
+======================================== */
+
+.big-bang-ring {
+
+    position: absolute;
+
+    width: 20px;
+
+    height: 20px;
+
+    left: 50%;
+
+    top: 50%;
+
+    transform:
+        translate(-50%, -50%) scale(0);
+
+    border-radius: 50%;
+
+    border: 1px solid rgba(255,
+            255,
+            255,
+            0.5);
+
+    opacity: 0;
+}
+
+
+.ring-1 {
+
+    box-shadow:
+        0 0 30px rgba(255, 255, 255, 0.5);
+}
+
+
+.ring-2 {
+
+    border-color:
+        rgba(180, 200, 255, 0.35);
+}
+
+
+.ring-3 {
+
+    border-color:
+        rgba(130, 160, 255, 0.2);
+}
+
+
+/* ========================================
+   PARTÃCULAS
+======================================== */
+
+.particles {
+
+    position: absolute;
+
+    width: 1px;
+
+    height: 1px;
+
+    left: 50%;
+
+    top: 50%;
+
+}
+
+
+/* PartÃ­cula individual */
+
+.particle {
+
+    position: absolute;
+
+    width: 3px;
+
+    height: 3px;
+
+    left: 0;
+
+    top: 0;
+
+    border-radius: 50%;
+
+    background: white;
+
+    box-shadow:
+        0 0 8px rgba(255, 255, 255, 0.8);
+
+    transform:
+        translate(-50%, -50%);
+
+    opacity: 0;
+}
+
+/* ========================================
+   VÃDEO DA HISTÃ“RIA
+======================================== */
+
+.story-video {
+    position: fixed;
+
+    width: 100vw;
+    height: 100vh;
+
+    top: 0;
+    left: 0;
+
+    object-fit: cover;
+
+    opacity: 1;
+
+    pointer-events: none;
+
+    z-index: 0;
+}
