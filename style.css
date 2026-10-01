@@ -279,46 +279,6 @@ body::before {
 
 
 /* ========================================
-   EARTH
-======================================== */
-
-.earth {
-
-    position: absolute;
-
-    width: 360px;
-
-    height: 360px;
-
-    border-radius: 50%;
-
-    right: 10%;
-
-    top: 50%;
-
-    transform:
-        translateY(-50%) scale(0);
-
-    opacity: 0;
-
-    background:
-        radial-gradient(circle at 35% 35%,
-            #78bfff,
-            #246ca7 45%,
-            #061626 75%);
-
-    box-shadow:
-        0 0 70px rgba(60, 150, 255, 0.4),
-
-        inset -50px -30px 70px rgba(0, 0, 0, 0.8);
-
-    transition: none;
-
-    will-change: transform, opacity;
-}
-
-
-/* ========================================
    LIFE
 ======================================== */
 
@@ -861,16 +821,6 @@ body::before {
     .timeline-point small {
 
         display: none;
-    }
-
-
-    .earth {
-
-        width: 220px;
-
-        height: 220px;
-
-        right: -50px;
     }
 
 
