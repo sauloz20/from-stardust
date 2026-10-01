@@ -1,247 +1,47 @@
-﻿
-// ========================================
-// FROM STARDUST
-// Scrollytelling V2
-// ========================================
-
-
-// ========================================
-// ELEMENTOS
-// ========================================
-
-const storySection =
-    document.querySelector(".story-section");
-
-const chapters =
-    document.querySelectorAll(".chapter");
-
-const timelinePoints =
-    document.querySelectorAll(".timeline-point");
-
-const timelineProgress =
-    document.querySelector(".timeline-progress");
-
-const progressValue =
-    document.querySelector("#progress-value");
-
-const universe =
-    document.querySelector(".universe");
-
-const earth =
-    document.querySelector(".earth");
-
-const life =
-    document.querySelector(".life");
-
-const human =
-    document.querySelector(".human");
-
-const bigBang =
-    document.querySelector(".big-bang");
-
-const bigBangCore =
-    document.querySelector(".big-bang-core");
-
-const bigBangRings =
-    document.querySelectorAll(".big-bang-ring");
-
-const particlesContainer =
-    document.querySelector(".particles");
-
-
-const restartButton =
-    document.querySelector("#restart");
-
-
-// ========================================
-// ESTADO
-// ========================================
+﻿const storySection = document.querySelector(".story-section");
+const storyVideo = document.querySelector("#story-video");
+const chapters = [...document.querySelectorAll(".chapter")];
+const timelinePoints = [...document.querySelectorAll(".timeline-point")];
+const timelineProgress = document.querySelector(".timeline-progress");
+const progressValue = document.querySelector("#progress-value");
+const universe = document.querySelector(".universe");
+const earth = document.querySelector(".earth");
+const life = document.querySelector(".life");
+const human = document.querySelector(".human");
+const bigBangCore = document.querySelector(".big-bang-core");
+const bigBangRings = [...document.querySelectorAll(".big-bang-ring")];
+const particlesContainer = document.querySelector(".particles");
+const restartButton = document.querySelector("#restart");
 
 let progress = 0;
-
-let currentStep = 0;
-
-
-// ========================================
-// CALCULAR PROGRESSO
-// ========================================
-
-function updateProgress() {
-
-    const sectionTop =
-        storySection.offsetTop;
-
-    const sectionHeight =
-        storySection.offsetHeight;
-
-    const viewportHeight =
-        window.innerHeight;
-
-
-    const scrollPosition =
-        window.scrollY;
-
-
-    const scrollStart =
-        sectionTop;
-
-
-    const scrollEnd =
-        sectionTop +
-        sectionHeight -
-        viewportHeight;
-
-
-    progress =
-        (scrollPosition - scrollStart) /
-        (scrollEnd - scrollStart);
-
-
-    progress =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                progress
-            )
-        );
-
-
-    updateInterface();
-
-}
-
-
-// ========================================
-// ATUALIZAR INTERFACE
-// ========================================
-
-function updateInterface() {
-
-    const percentage =
-        Math.round(
-            progress * 100
-        );
-
-
-    // ------------------------------------
-    // PORCENTAGEM
-    // ------------------------------------
-
-    progressValue.textContent =
-        `${percentage}% `;
-
-
-    // ------------------------------------
-    // TIMELINE
-    // ------------------------------------
-
-    timelineProgress.style.height =
-        `${percentage}% `;
-
-
-    // ------------------------------------
-    // CAPÃTULO ATUAL
-    // ------------------------------------
-
-    const totalSteps =
-        chapters.length - 1;
-
-
-    const step =
-        Math.min(
-            totalSteps,
-            Math.floor(
-                progress * (totalSteps + 0.999)
-            )
-        );
-
-
-    if (step !== currentStep) {
-
-        currentStep = step;
-
-        updateChapter(step);
-    }
-
-    // ------------------------------------
-    // ELEMENTOS VISUAIS
-    // ------------------------------------
-
-    updateVisuals();
-
-}
-
-
-// ========================================
-// ATUALIZAR CAPÃTULO
-// ========================================
-
-function updateChapter(step) {
-
-    chapters.forEach(
-        (chapter, index) => {
-
-            chapter.classList.toggle(
-                "active",
-                index === step
-            );
-
-        }
-    );
-
-
-    timelinePoints.forEach(
-        (point, index) => {
-
-            point.classList.toggle(
-                "active",
-                index === step
-            );
-
-        }
-    );
-
-}
-
-
-// ========================================
-// ATUALIZAR VISUAIS
-// ========================================
-
-const storyVideo =
-    document.querySelector("#story-video");
-
+let currentStep = -1;
+let targetVideoTime = 0;
+let videoLoopStarted = false;
 const particles = [];
+const prefersReducedMotion = window.matchMedia(
+    "(prefers-reduced-motion: reduce)"
+).matches;
+
+function clamp(value, min = 0, max = 1) {
+    return Math.min(max, Math.max(min, value));
+}
 
 function createParticles() {
-
-    const particleCount = 80;
+    if (!particlesContainer) return;
 
     const fragment = document.createDocumentFragment();
 
-    for (let i = 0; i < particleCount; i++) {
-
+    for (let index = 0; index < 80; index += 1) {
         const particle = document.createElement("div");
+        const angle = Math.random() * Math.PI * 2;
+        const distance = 100 + Math.random() * 500;
+        const size = 1 + Math.random() * 3;
 
-        const angle =
-            Math.random() * Math.PI * 2;
-
-        const distance =
-            100 + Math.random() * 500;
-
-        const size =
-            1 + Math.random() * 3;
-
-        particle.classList.add("particle");
-        particle.dataset.angle = angle;
-        particle.dataset.distance = distance;
-
-        particle.style.width =
-            `${size}px`;
-
-        particle.style.height =
-            `${size}px`;
+        particle.className = "particle";
+        particle.dataset.angle = String(angle);
+        particle.dataset.distance = String(distance);
+        particle.style.width = `${size}px`;
+        particle.style.height = `${size}px`;
 
         particles.push(particle);
         fragment.appendChild(particle);
@@ -250,376 +50,221 @@ function createParticles() {
     particlesContainer.appendChild(fragment);
 }
 
-createParticles();
+function updateChapter(step) {
+    chapters.forEach((chapter, index) => {
+        chapter.classList.toggle("active", index === step);
+    });
 
-let targetVideoTime = 0;
+    timelinePoints.forEach((point, index) => {
+        point.classList.toggle("active", index === step);
+        point.setAttribute("aria-current", index === step ? "step" : "false");
+    });
+}
+
+function updateProgress(nextProgress) {
+    progress = clamp(nextProgress);
+
+    const percentage = Math.round(progress * 100);
+    const totalSteps = Math.max(1, chapters.length - 1);
+    const step = Math.min(
+        totalSteps,
+        Math.floor(progress * chapters.length)
+    );
+
+    if (progressValue) {
+        progressValue.textContent = `${percentage}%`;
+    }
+
+    if (timelineProgress) {
+        timelineProgress.style.height = `${percentage}%`;
+    }
+
+    if (step !== currentStep) {
+        currentStep = step;
+        updateChapter(step);
+    }
+
+    updateVisuals();
+}
 
 function updateVisuals() {
-    // ====================================
-    // VÍDEO CONTROLADO PELO SCROLL
-    // ====================================
-
     if (
         storyVideo &&
-        storyVideo.readyState >= 2 &&
-        Number.isFinite(storyVideo.duration)
+        storyVideo.readyState >= 1 &&
+        Number.isFinite(storyVideo.duration) &&
+        !prefersReducedMotion
     ) {
-
-        targetVideoTime =
-            progress * storyVideo.duration;
-
+        targetVideoTime = progress * storyVideo.duration;
     }
-    // ====================================
-    // BIG BANG
-    // ====================================
 
-    const bigBangProgress =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                progress / 0.20
-            )
+    const bigBangProgress = clamp(progress / 0.20);
+    const coreOpacity = clamp(bigBangProgress * 3);
+    const coreScale = Math.max(0, 1 - bigBangProgress * 0.5);
+
+    if (bigBangCore) {
+        bigBangCore.style.opacity = coreOpacity;
+        bigBangCore.style.transform =
+            `translate(-50%, -50%) scale(${coreScale})`;
+    }
+
+    bigBangRings.forEach((ring, index) => {
+        const delay = index * 0.12;
+        const ringProgress = clamp(
+            (bigBangProgress - delay) / (1 - delay)
         );
+        const scale = ringProgress * 1000;
+        const opacity = Math.max(0, 0.5 - ringProgress * 0.5);
 
-    // ------------------------------------
-    // NÚCLEO
-    // ------------------------------------
+        ring.style.opacity = opacity;
+        ring.style.transform =
+            `translate(-50%, -50%) scale(${scale})`;
+    });
 
-    const coreOpacity =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                bigBangProgress * 3
-            )
-        );
+    particles.forEach((particle) => {
+        const angle = Number(particle.dataset.angle);
+        const distance = Number(particle.dataset.distance);
+        const currentDistance = distance * bigBangProgress;
+        const x = Math.cos(angle) * currentDistance;
+        const y = Math.sin(angle) * currentDistance;
 
-    const coreScale =
-        Math.max(
-            0,
-            1 - bigBangProgress * 0.5
-        );
+        particle.style.opacity = clamp(bigBangProgress * 2);
+        particle.style.transform = `translate(${x}px, ${y}px)`;
+    });
 
-    bigBangCore.style.opacity =
-        coreOpacity;
+    const earthProgress = clamp((progress - 0.25) / 0.25);
+    const lifeProgress = clamp((progress - 0.48) / 0.20);
+    const humanProgress = clamp((progress - 0.72) / 0.20);
 
-    bigBangCore.style.transform = `
-        translate(-50%, -50%)
-        scale(${coreScale})
-    `;
+    if (earth) {
+        earth.style.opacity = earthProgress;
+        earth.style.transform =
+            `translateY(-50%) scale(${earthProgress})`;
+    }
 
-    // ------------------------------------
-    // ANÉIS
-    // ------------------------------------
+    if (life) {
+        life.style.opacity = lifeProgress;
+        life.style.transform =
+            `translateY(-50%) scale(${lifeProgress})`;
+    }
 
-    bigBangRings.forEach(
-        (ring, index) => {
-
-            const delay =
-                index * 0.12;
-
-            const ringProgress =
-                Math.max(
-                    0,
-                    Math.min(
-                        1,
-                        (bigBangProgress - delay) /
-                        (1 - delay)
-                    )
-                );
-
-            const scale =
-                ringProgress * 1000;
-
-            const opacity =
-                Math.max(
-                    0,
-                    0.5 - ringProgress * 0.5
-                );
-
-            ring.style.opacity =
-                opacity;
-
-            ring.style.transform = `
-                translate(-50%, -50%)
-                scale(${scale})
-            `;
-        }
-    );
-
-    // ------------------------------------
-    // PARTÍCULAS
-    // ------------------------------------
-
-    particles.forEach(
-        (particle) => {
-
-            const angle =
-                Number(
-                    particle.dataset.angle
-                );
-
-            const distance =
-                Number(
-                    particle.dataset.distance
-                );
-
-            const currentDistance =
-                distance *
-                bigBangProgress;
-
-            const x =
-                Math.cos(angle) *
-                currentDistance;
-
-            const y =
-                Math.sin(angle) *
-                currentDistance;
-
-            const opacity =
-                Math.max(
-                    0,
-                    Math.min(
-                        1,
-                        bigBangProgress * 2
-                    )
-                );
-
-            particle.style.opacity =
-                opacity;
-
-            particle.style.transform = `
-                translate(
-                    ${x}px,
-                    ${y}px
-                )
-            `;
-        }
-    );
-
-    // ====================================
-    // TERRA
-    // ====================================
-
-    const earthStart =
-        0.25;
-
-    const earthProgress =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (progress - earthStart) /
-                0.25
-            )
-        );
-
-    earth.style.opacity =
-        earthProgress;
-
-    earth.style.transform = `
-        translateY(-50%)
-        scale(${earthProgress})
-    `;
-
-    // ====================================
-    // VIDA
-    // ====================================
-
-    const lifeStart =
-        0.48;
-
-    const lifeProgress =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (progress - lifeStart) /
-                0.20
-            )
-        );
-
-    life.style.opacity =
-        lifeProgress;
-
-    life.style.transform = `
-        translateY(-50%)
-        scale(${lifeProgress})
-    `;
-
-    // ====================================
-    // HUMANO
-    // ====================================
-
-    const humanStart =
-        0.72;
-
-    const humanProgress =
-        Math.max(
-            0,
-            Math.min(
-                1,
-                (progress - humanStart) /
-                0.20
-            )
-        );
-
-    human.style.opacity =
-        humanProgress;
-
-    human.style.transform = `
-        translateY(
-            ${100 - humanProgress * 100}%
-        )
-        scale(
-            ${0.7 + humanProgress * 0.3}
-        )
-    `;
+    if (human) {
+        human.style.opacity = humanProgress;
+        human.style.transform =
+            `translateY(${100 - humanProgress * 100}%) scale(${0.7 + humanProgress * 0.3})`;
+    }
 }
 
 function animateVideo() {
-
     if (
         storyVideo &&
         storyVideo.readyState >= 2 &&
         Number.isFinite(storyVideo.duration)
     ) {
+        if (prefersReducedMotion) {
+            storyVideo.currentTime = 0;
+        } else {
+            const difference = targetVideoTime - storyVideo.currentTime;
 
-        const difference =
-            targetVideoTime - storyVideo.currentTime;
-
-        if (Math.abs(difference) > 0.01) {
-            storyVideo.currentTime +=
-                difference * 0.18;
+            if (Math.abs(difference) > 0.01) {
+                storyVideo.currentTime += difference * 0.22;
+            }
         }
     }
 
     requestAnimationFrame(animateVideo);
 }
 
-if (storyVideo) {
-    storyVideo.addEventListener(
-        "loadedmetadata",
-        animateVideo,
-        { once: true }
+function getSectionScrollTop(step) {
+    const sectionTop =
+        storySection.getBoundingClientRect().top + window.scrollY;
+    const scrollDistance = Math.max(
+        0,
+        storySection.offsetHeight - window.innerHeight
     );
+
+    return sectionTop + (step / (chapters.length - 1)) * scrollDistance;
 }
 
+function scrollToChapter(index) {
+    const top = getSectionScrollTop(index);
 
-// ========================================
-// SCROLL
-// ========================================
-
-let updateFramePending = false;
-
-function requestProgressUpdate() {
-
-    if (updateFramePending) return;
-
-    updateFramePending = true;
-
-    requestAnimationFrame(
-        () => {
-            updateFramePending = false;
-            updateProgress();
-        }
-    );
+    window.scrollTo({
+        top,
+        behavior: prefersReducedMotion ? "auto" : "smooth"
+    });
 }
 
-window.addEventListener(
-    "scroll",
-    requestProgressUpdate,
-    {
-        passive: true
-    }
-);
+function initScrollTrigger() {
+    if (window.gsap && window.ScrollTrigger) {
+        gsap.registerPlugin(ScrollTrigger);
 
-
-// ========================================
-// RESIZE
-// ========================================
-
-window.addEventListener(
-    "resize",
-    requestProgressUpdate
-);
-
-
-// ========================================
-// TIMELINE â€” CLIQUE
-// ========================================
-
-timelinePoints.forEach(
-    (point, index) => {
-
-        point.addEventListener(
-            "click",
-            () => {
-
-                const sectionTop =
-                    storySection.offsetTop;
-
-                const sectionHeight =
-                    storySection.offsetHeight;
-
-                const viewportHeight =
-                    window.innerHeight;
-
-
-                const scrollDistance =
-                    sectionHeight -
-                    viewportHeight;
-
-
-                const targetProgress =
-                    index /
-                    (chapters.length - 1);
-
-
-                const targetScroll =
-                    sectionTop +
-                    targetProgress *
-                    scrollDistance;
-
-
-                window.scrollTo({
-
-                    top: targetScroll,
-
-                    behavior: "smooth"
-
-                });
-
+        gsap.to({ value: 0 }, {
+            value: 1,
+            ease: "none",
+            scrollTrigger: {
+                trigger: storySection,
+                start: "top top",
+                end: "bottom bottom",
+                scrub: prefersReducedMotion ? false : 0.35,
+                onUpdate: (self) => updateProgress(self.progress)
             }
-        );
-
-    }
-);
-
-
-// ========================================
-// VOLTAR AO COMEÃ‡O
-// ========================================
-
-restartButton.addEventListener(
-    "click",
-    () => {
-
-        window.scrollTo({
-
-            top: 0,
-
-            behavior: "smooth"
-
         });
 
+        ScrollTrigger.refresh();
+        return;
     }
-);
 
+    let framePending = false;
 
-// ========================================
-// INICIALIZAÃ‡ÃƒO
-// ========================================
+    const fallbackUpdate = () => {
+        if (framePending) return;
+        framePending = true;
 
-updateProgress();
+        requestAnimationFrame(() => {
+            framePending = false;
+            const rect = storySection.getBoundingClientRect();
+            const distance = storySection.offsetHeight - window.innerHeight;
+            updateProgress(clamp(-rect.top / distance));
+        });
+    };
+
+    window.addEventListener("scroll", fallbackUpdate, { passive: true });
+    window.addEventListener("resize", fallbackUpdate);
+    fallbackUpdate();
+}
+
+createParticles();
+updateProgress(0);
+initScrollTrigger();
+
+if (storyVideo) {
+    storyVideo.addEventListener("loadedmetadata", () => {
+        targetVideoTime = progress * storyVideo.duration;
+        if (!videoLoopStarted) {
+            videoLoopStarted = true;
+            animateVideo();
+        }
+    }, { once: true });
+
+    if (storyVideo.readyState >= 1 && !videoLoopStarted) {
+        videoLoopStarted = true;
+        animateVideo();
+    }
+}
+
+timelinePoints.forEach((point, index) => {
+    point.addEventListener("click", () => scrollToChapter(index));
+});
+
+if (restartButton) {
+    restartButton.addEventListener("click", () => {
+        window.scrollTo({
+            top: 0,
+            behavior: prefersReducedMotion ? "auto" : "smooth"
+        });
+    });
+}
+
+window.addEventListener("load", () => {
+    if (window.ScrollTrigger) ScrollTrigger.refresh();
+});

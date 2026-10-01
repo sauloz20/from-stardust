@@ -191,6 +191,7 @@ body::before {
 }
 
 
+.story-stage,
 .sticky-scene {
 
     position: sticky;
@@ -203,7 +204,7 @@ body::before {
 
     overflow: hidden;
 
-    background: #030303;
+    z-index: 1;
 }
 
 
