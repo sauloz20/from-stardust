@@ -1,4 +1,4 @@
-﻿/* ========================================
+/* ========================================
    RESET
 ======================================== */
 
@@ -297,9 +297,9 @@ body {
 
         inset -50px -30px 70px rgba(0, 0, 0, 0.8);
 
-    transition:
-        transform 1.2s ease,
-        opacity 1.2s ease;
+    transition: none;
+
+    will-change: transform, opacity;
 }
 
 
@@ -331,9 +331,9 @@ body {
     box-shadow:
         0 0 40px rgba(100, 255, 180, 0.4);
 
-    transition:
-        transform 1.2s ease,
-        opacity 1.2s ease;
+    transition: none;
+
+    will-change: transform, opacity;
 }
 
 
@@ -363,9 +363,9 @@ body {
 
     opacity: 0;
 
-    transition:
-        transform 1.2s ease,
-        opacity 1.2s ease;
+    transition: none;
+
+    will-change: transform, opacity;
 }
 
 
@@ -1018,6 +1018,8 @@ body {
         translate(-50%, -50%);
 
     opacity: 0;
+
+    will-change: transform, opacity;
 }
 
 /* ========================================

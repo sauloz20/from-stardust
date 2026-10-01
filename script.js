@@ -164,44 +164,6 @@ function updateInterface() {
         updateChapter(step);
     }
 
-    // ========================================
-    // CRIAR PARTÃCULAS DO BIG BANG
-    // ========================================
-    const particleCount = 80;
-
-    for (let i = 0; i < particleCount; i++) {
-
-        const particle =
-            document.createElement("div");
-
-        particle.classList.add("particle");
-
-        const angle =
-            Math.random() * Math.PI * 2;
-
-        const distance =
-            100 + Math.random() * 500;
-
-        const size =
-            1 + Math.random() * 3;
-
-        particle.dataset.angle = angle;
-        particle.dataset.distance = distance;
-
-        particle.style.width =
-            `${size}px`;
-
-        particle.style.height =
-            `${size}px`;
-
-        particlesContainer.appendChild(
-            particle
-        );
-
-        particles.push(particle);
-    }
-
-
     // ------------------------------------
     // ELEMENTOS VISUAIS
     // ------------------------------------
@@ -252,6 +214,46 @@ const storyVideo =
 
 const particles = [];
 
+function createParticles() {
+
+    const particleCount = 80;
+
+    const fragment = document.createDocumentFragment();
+
+    for (let i = 0; i < particleCount; i++) {
+
+        const particle = document.createElement("div");
+
+        const angle =
+            Math.random() * Math.PI * 2;
+
+        const distance =
+            100 + Math.random() * 500;
+
+        const size =
+            1 + Math.random() * 3;
+
+        particle.classList.add("particle");
+        particle.dataset.angle = angle;
+        particle.dataset.distance = distance;
+
+        particle.style.width =
+            `${size}px`;
+
+        particle.style.height =
+            `${size}px`;
+
+        particles.push(particle);
+        fragment.appendChild(particle);
+    }
+
+    particlesContainer.appendChild(fragment);
+}
+
+createParticles();
+
+let targetVideoTime = 0;
+
 function updateVisuals() {
     // ====================================
     // VÍDEO CONTROLADO PELO SCROLL
@@ -263,7 +265,7 @@ function updateVisuals() {
         Number.isFinite(storyVideo.duration)
     ) {
 
-        storyVideo.currentTime =
+        targetVideoTime =
             progress * storyVideo.duration;
 
     }
@@ -476,14 +478,58 @@ function updateVisuals() {
     `;
 }
 
+function animateVideo() {
+
+    if (
+        storyVideo &&
+        storyVideo.readyState >= 2 &&
+        Number.isFinite(storyVideo.duration)
+    ) {
+
+        const difference =
+            targetVideoTime - storyVideo.currentTime;
+
+        if (Math.abs(difference) > 0.01) {
+            storyVideo.currentTime +=
+                difference * 0.18;
+        }
+    }
+
+    requestAnimationFrame(animateVideo);
+}
+
+if (storyVideo) {
+    storyVideo.addEventListener(
+        "loadedmetadata",
+        animateVideo,
+        { once: true }
+    );
+}
+
 
 // ========================================
 // SCROLL
 // ========================================
 
+let updateFramePending = false;
+
+function requestProgressUpdate() {
+
+    if (updateFramePending) return;
+
+    updateFramePending = true;
+
+    requestAnimationFrame(
+        () => {
+            updateFramePending = false;
+            updateProgress();
+        }
+    );
+}
+
 window.addEventListener(
     "scroll",
-    updateProgress,
+    requestProgressUpdate,
     {
         passive: true
     }
@@ -496,7 +542,7 @@ window.addEventListener(
 
 window.addEventListener(
     "resize",
-    updateProgress
+    requestProgressUpdate
 );
 
 
@@ -577,6 +623,3 @@ restartButton.addEventListener(
 // ========================================
 
 updateProgress();
-
-
-
