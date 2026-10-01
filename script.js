@@ -58,6 +58,7 @@ function updateChapter(step) {
     timelinePoints.forEach((point, index) => {
         point.classList.toggle("active", index === step);
         point.setAttribute("aria-current", index === step ? "step" : "false");
+        point.style.top = `${(index / Math.max(1, timelinePoints.length - 1)) * 100}%`;
     });
 }
 
